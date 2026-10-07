@@ -64,5 +64,10 @@ order below is load-bearing.
 ## Recovering a partial release
 
 The two workflows are independent, so a failed npm publish does not lose the
-release assets. Re-run `publish.yml` alone from the Actions tab with the tag;
-re-running `release.yml` is also safe (`gh release upload --clobber`).
+release assets. To retry the publish, open the failed `publish.yml` run that
+the tag push started and use **Re-run failed jobs**: the re-run keeps the tag
+as its ref, so it checks out the tagged tree and publishes. Do not start
+`publish.yml` by hand with the `tag` input instead. A manual run checks out
+the branch it is dispatched from rather than the tag, and publishes only when
+the `publish` input is `true` (the default is `false`). Re-running
+`release.yml` is safe as well (`gh release upload --clobber`).
