@@ -6,8 +6,10 @@
 //
 // Each git invocation is checked in the repository it actually runs in: the
 // directory set by a preceding `cd` in the same command, or by `git -C`,
-// falling back to the session's cwd. The first push of an empty repository
-// (no `origin/main` yet) is allowed, since it can only go to `main`.
+// falling back to the session's cwd. A push that reaches `main` is blocked
+// whatever the local refs say: a missing `origin/main` only means it was never
+// fetched, not that the remote has none. The first push of a new repository is
+// a one-off for a human to make.
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
@@ -18,9 +20,17 @@ if (!/\bgit\b/.test(command)) process.exit(0);
 
 const PROTECTED = 'main';
 
-/** Split a shell command into simple commands on && || ; | and newlines. */
+/** Words that can precede the command a simple command runs. */
+const WRAPPERS = new Set(['env', 'command', 'exec', 'nohup', 'time', 'rtk']);
+
+/**
+ * Split a shell command into simple commands on && || ; | and newlines. A
+ * backslash-newline is a line continuation, not a boundary: the shell runs
+ * `git \<newline>commit` as `git commit`.
+ */
 function segments(cmd) {
   return cmd
+    .replace(/\\\r?\n/g, ' ')
     .split(/&&|\|\||;|\||\n/)
     .map((s) => s.trim())
     .filter(Boolean);
@@ -29,6 +39,19 @@ function segments(cmd) {
 /** Split one simple command into words, honouring quotes. */
 function words(seg) {
   return [...seg.matchAll(/"([^"]*)"|'([^']*)'|(\S+)/g)].map((m) => m[1] ?? m[2] ?? m[3]);
+}
+
+/**
+ * Index of `git` when it is the command this simple command runs: the first
+ * word, after any `VAR=value` assignments and wrappers such as `env` or `rtk`.
+ * -1 when git is only an argument, as in `echo git commit`.
+ */
+function gitIndex(w) {
+  let i = 0;
+  while (i < w.length && (/^[A-Za-z_]\w*=/.test(w[i]) || WRAPPERS.has(w[i]))) {
+    i += 1;
+  }
+  return i < w.length && /^(.*[/\\])?git(\.exe)?$/i.test(w[i]) ? i : -1;
 }
 
 /** Map Git Bash paths like /d/foo to D:/foo on Windows. */
@@ -67,7 +90,7 @@ for (const seg of segments(command)) {
     continue;
   }
 
-  const gi = w.indexOf('git');
+  const gi = gitIndex(w);
   if (gi === -1) continue;
 
   // Global options before the subcommand, notably -C <dir>.
@@ -98,26 +121,21 @@ for (const seg of segments(command)) {
   }
 
   // push: positional args after the options are [remote] [refspec...]
-  const positional = w.slice(i + 1).filter((a) => !a.startsWith('-'));
-  const refspecs = positional.slice(1);
+  const args = w.slice(i + 1);
+  const pushesAll = args.find((a) => a === '--all' || a === '--mirror');
+  if (pushesAll) {
+    block(`'git push ${pushesAll}' includes '${PROTECTED}' in ${dir}`);
+  }
+  const refspecs = args.filter((a) => !a.startsWith('-')).slice(1);
+  // Each refspec's destination: after the colon if there is one, without the
+  // force marker `+`, and with `HEAD` meaning the branch checked out.
   const targets = refspecs.length
-    ? refspecs.map((r) =>
-        r
-          .split(':')
-          .pop()
-          .replace(/^refs\/heads\//, ''),
-      )
+    ? refspecs.map((r) => {
+        const dst = r.replace(/^\+/, '').split(':').pop();
+        return dst === 'HEAD' ? branch : dst.replace(/^refs\/heads\//, '');
+      })
     : [branch];
-  if (!targets.includes(PROTECTED)) continue;
-
-  const remote = positional[0] || 'origin';
-  const remoteHasMain = git(dir, [
-    'rev-parse',
-    '--verify',
-    '--quiet',
-    `refs/remotes/${remote}/${PROTECTED}`,
-  ]);
-  if (remoteHasMain === null) continue; // first push of an empty repository
-
-  block(`'git push' to '${PROTECTED}' in ${dir}`);
+  if (targets.includes(PROTECTED)) {
+    block(`'git push' to '${PROTECTED}' in ${dir}`);
+  }
 }
