@@ -135,6 +135,21 @@ describe('guard-protected-branches', () => {
     expect(guard('env GIT_TRACE=1 git commit -m x', onMain)).toBe(2);
     expect(guard('rtk git push origin main', onFeature)).toBe(2);
   });
+
+  it('blocks a wildcard refspec whose destination can be main', () => {
+    expect(guard("git push origin 'refs/heads/*:refs/heads/*'", onFeature)).toBe(2);
+    expect(guard("git push origin '+refs/heads/*:refs/heads/*'", onFeature)).toBe(2);
+    expect(guard("git push origin 'refs/heads/feat-*:refs/heads/feat-*'", onFeature)).toBe(0);
+  });
+
+  it('does not split on separators inside quotes', () => {
+    // A word after `main` keeps the closing quote off it, so a quote-blind
+    // split would see a real push to main.
+    expect(guard('git commit -m "fix; git push origin main later"', onFeature)).toBe(0);
+    expect(guard("git commit -m 'a && git push origin main later'", onFeature)).toBe(0);
+    expect(guard('git commit -m "say \\"hi\\"; git push origin main later"', onFeature)).toBe(0);
+    expect(guard('git commit -m "x" && git push origin main', onFeature)).toBe(2);
+  });
 });
 
 describe('format-on-edit', () => {

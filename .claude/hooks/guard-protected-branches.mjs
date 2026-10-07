@@ -24,16 +24,54 @@ const PROTECTED = 'main';
 const WRAPPERS = new Set(['env', 'command', 'exec', 'nohup', 'time', 'rtk']);
 
 /**
- * Split a shell command into simple commands on && || ; | and newlines. A
+ * Split a shell command into simple commands on && || ; | and newlines, but
+ * not inside quotes: `git commit -m "a; b"` is one command. A
  * backslash-newline is a line continuation, not a boundary: the shell runs
  * `git \<newline>commit` as `git commit`.
  */
 function segments(cmd) {
-  return cmd
-    .replace(/\\\r?\n/g, ' ')
-    .split(/&&|\|\||;|\||\n/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const s = cmd.replace(/\\\r?\n/g, ' ');
+  const out = [];
+  let cur = '';
+  let quote = null;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (quote) {
+      cur += c;
+      // Inside double quotes a backslash escapes the next character.
+      if (quote === '"' && c === '\\' && i + 1 < s.length) cur += s[++i];
+      else if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'") {
+      quote = c;
+      cur += c;
+    } else if (s.startsWith('&&', i) || s.startsWith('||', i)) {
+      out.push(cur);
+      cur = '';
+      i += 1;
+    } else if (c === ';' || c === '|' || c === '\n') {
+      out.push(cur);
+      cur = '';
+    } else {
+      cur += c;
+    }
+  }
+  out.push(cur);
+  return out.map((seg) => seg.trim()).filter(Boolean);
+}
+
+/**
+ * Whether a push destination can update the protected branch: the branch
+ * itself, or a wildcard such as `refs/heads/*` whose pattern covers it.
+ */
+function reachesProtected(dst) {
+  if (!dst.includes('*')) {
+    return dst.replace(/^refs\/heads\//, '') === PROTECTED;
+  }
+  const escape = (part) => part.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`^${dst.split('*').map(escape).join('.*')}$`);
+  return pattern.test(PROTECTED) || pattern.test(`refs/heads/${PROTECTED}`);
 }
 
 /** Split one simple command into words, honouring quotes. */
@@ -132,10 +170,10 @@ for (const seg of segments(command)) {
   const targets = refspecs.length
     ? refspecs.map((r) => {
         const dst = r.replace(/^\+/, '').split(':').pop();
-        return dst === 'HEAD' ? branch : dst.replace(/^refs\/heads\//, '');
+        return dst === 'HEAD' ? branch : dst;
       })
     : [branch];
-  if (targets.includes(PROTECTED)) {
+  if (targets.some(reachesProtected)) {
     block(`'git push' to '${PROTECTED}' in ${dir}`);
   }
 }
