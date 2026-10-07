@@ -150,6 +150,22 @@ describe('guard-protected-branches', () => {
     expect(guard('git commit -m "say \\"hi\\"; git push origin main later"', onFeature)).toBe(0);
     expect(guard('git commit -m "x" && git push origin main', onFeature)).toBe(2);
   });
+
+  it('skips the values of push options instead of reading them as remote or refspec', () => {
+    // On main, with no refspec, these push main: the option value must not
+    // be taken for the remote and the remote for a refspec.
+    expect(guard('git push -o ci.skip origin', onMain)).toBe(2);
+    expect(guard('git push --push-option ci.skip origin', onMain)).toBe(2);
+    expect(guard('git push --receive-pack x origin', onMain)).toBe(2);
+    expect(guard('git push -o ci.skip origin feature', onFeature)).toBe(0);
+    expect(guard('git push origin -- main', onFeature)).toBe(2);
+  });
+
+  it('treats every positional argument as a refspec when --repo names the remote', () => {
+    expect(guard('git push --repo=origin main', onFeature)).toBe(2);
+    expect(guard('git push --repo origin main', onFeature)).toBe(2);
+    expect(guard('git push --repo=origin feature', onFeature)).toBe(0);
+  });
 });
 
 describe('format-on-edit', () => {
@@ -190,5 +206,31 @@ describe('format-on-edit', () => {
     const { stdout } = edit('broken.js', 'const = ;\n');
     expect(stdout).toContain('additionalContext');
     expect(stdout).toMatch(/prettier: .*\S/);
+  }, 30000);
+
+  it("finds a package's CLI when its bin key differs from the package name", () => {
+    // A stand-in prettier whose only bin entry has another name. Its script
+    // marks the file it was given, so a change proves it was found and run.
+    const project = mkdtempSync(join(tmpdir(), 'format-bin-'));
+    try {
+      const pkg = join(project, 'node_modules', 'prettier');
+      mkdirSync(pkg, { recursive: true });
+      writeFileSync(
+        join(pkg, 'package.json'),
+        JSON.stringify({ name: 'prettier', bin: { 'prettier-cli': 'cli.js' } }),
+      );
+      writeFileSync(
+        join(pkg, 'cli.js'),
+        'require("fs").writeFileSync(process.argv.at(-1), "formatted\\n");\n',
+      );
+      const file = join(project, 'doc.md');
+      writeFileSync(file, 'draft\n');
+
+      runHook(FORMAT, { tool_input: { file_path: file }, cwd: project });
+
+      expect(readFileSync(file, 'utf8')).toBe('formatted\n');
+    } finally {
+      rmSync(project, { recursive: true, force: true });
+    }
   }, 30000);
 });

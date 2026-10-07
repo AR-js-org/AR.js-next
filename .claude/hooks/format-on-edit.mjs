@@ -24,14 +24,15 @@ if (
 
 /**
  * The CLI script of a locally installed package, from its `bin` field, or null
- * when the package is not installed.
+ * when the package is not installed. A `bin` map is looked up by the package
+ * name, falling back to its first entry when no key matches.
  */
 function localBin(pkg) {
   const dir = join(cwd, 'node_modules', pkg);
   const manifest = join(dir, 'package.json');
   if (!existsSync(manifest)) return null;
   const { bin } = JSON.parse(readFileSync(manifest, 'utf8'));
-  const script = typeof bin === 'string' ? bin : bin?.[pkg];
+  const script = typeof bin === 'string' ? bin : (bin?.[pkg] ?? Object.values(bin ?? {})[0]);
   return script ? join(dir, script) : null;
 }
 

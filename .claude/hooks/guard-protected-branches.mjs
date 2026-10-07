@@ -20,6 +20,9 @@ if (!/\bgit\b/.test(command)) process.exit(0);
 
 const PROTECTED = 'main';
 
+/** `git push` options whose value is the next word when not given with `=`. */
+const PUSH_VALUE_OPTIONS = new Set(['-o', '--push-option', '--repo', '--receive-pack', '--exec']);
+
 /** Words that can precede the command a simple command runs. */
 const WRAPPERS = new Set(['env', 'command', 'exec', 'nohup', 'time', 'rtk']);
 
@@ -164,7 +167,23 @@ for (const seg of segments(command)) {
   if (pushesAll) {
     block(`'git push ${pushesAll}' includes '${PROTECTED}' in ${dir}`);
   }
-  const refspecs = args.filter((a) => !a.startsWith('-')).slice(1);
+  // Collect the positional arguments: skip options, including the value of
+  // those that take one as the next word, and take everything after `--`.
+  const positional = [];
+  let repoOption = false;
+  for (let k = 0; k < args.length; k++) {
+    const a = args[k];
+    if (a === '--') {
+      positional.push(...args.slice(k + 1));
+      break;
+    }
+    if (a === '--repo' || a.startsWith('--repo=')) repoOption = true;
+    if (PUSH_VALUE_OPTIONS.has(a)) k += 1;
+    else if (!a.startsWith('-')) positional.push(a);
+  }
+  // Normally [remote] [refspec...]. With --repo naming the remote, a
+  // positional argument may be either, so every one is checked as a refspec.
+  const refspecs = repoOption ? positional : positional.slice(1);
   // Each refspec's destination: after the colon if there is one, without the
   // force marker `+`, and with `HEAD` meaning the branch checked out.
   const targets = refspecs.length
