@@ -69,7 +69,14 @@ export class FramePumpSystem {
 
     // Every frame goes out through here, so none can miss its timestamp:
     // Date.now(), the clock the tracking plugins stamp marker events with.
+    // Creating the ImageBitmap is asynchronous, so stop() can run while a
+    // frame is still being produced; such a frame is dropped, and its bitmap,
+    // which nothing else will receive, is closed.
     function emitFrameEvent(payload) {
+      if (!state.running) {
+        payload.imageBitmap?.close?.();
+        return;
+      }
       bus.emit('engine:update', { id: ++state._fid, ...payload, timestamp: Date.now() });
     }
 
