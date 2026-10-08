@@ -31,4 +31,37 @@ describe('FramePumpSystem frames', () => {
 
     expect(frames[0]).toMatchObject({ id: 1, width: 640, height: 480, timestamp: 1234 });
   });
+
+  it('emits nothing after stop(), and closes a bitmap that was still being created', async () => {
+    let step;
+    let finishBitmap;
+    const bitmap = { close: vi.fn() };
+    const video = {
+      tagName: 'VIDEO',
+      videoWidth: 640,
+      videoHeight: 480,
+      requestVideoFrameCallback: (cb) => ((step = cb), 1),
+      cancelVideoFrameCallback: () => {},
+    };
+    vi.stubGlobal(
+      'createImageBitmap',
+      () => new Promise((resolve) => (finishBitmap = () => resolve(bitmap))),
+    );
+    const ctx = fakeContext(video);
+    const frames = [];
+    ctx.eventBus.on('engine:update', (f) => frames.push(f));
+
+    try {
+      FramePumpSystem.start(ctx);
+      const pending = step();
+      FramePumpSystem.stop(ctx);
+      finishBitmap();
+      await pending;
+    } finally {
+      vi.unstubAllGlobals();
+    }
+
+    expect(frames).toEqual([]);
+    expect(bitmap.close).toHaveBeenCalledTimes(1);
+  });
 });
