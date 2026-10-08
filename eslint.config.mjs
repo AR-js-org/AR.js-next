@@ -5,8 +5,11 @@ import prettier from 'eslint-config-prettier';
 export default [
   {
     ignores: [
-      'examples/vite-artoolkit/vendor/**',
-      'examples/vite-artoolkit/data/**',
+      // Standalone example projects: their install and build output, and
+      // binary assets.
+      'examples/*/node_modules/**',
+      'examples/*/dist/**',
+      'examples/*/public/data/**',
       '**/*.dat',
       '**/*.hiro',
       '**/*.map',

@@ -1,5 +1,5 @@
-// Example: AR.js Core ECS + ArtoolkitPlugin with Start/Stop/Load buttons
-// Import everything from the bundled lib.
+// Example: AR.js-next ECS + ArtoolkitPlugin with Start/Stop/Load buttons.
+// The core comes from this repository (file:../..), the plugin from npm.
 
 import {
   Engine,
@@ -8,7 +8,9 @@ import {
   SOURCE_TYPES,
   webcamPlugin,
   defaultProfilePlugin,
-} from '../../dist/arjs-core.mjs';
+} from '@ar-js-org/ar.js-next';
+import { ArtoolkitPlugin } from '@ar-js-org/arjs-plugin-artoolkit';
+import wasmUrl from '@ar-js-org/artoolkit5-wasm/dist/artoolkit5.wasm?url';
 
 // UI
 const statusEl = document.getElementById('status');
@@ -83,10 +85,6 @@ async function bootstrap() {
   engine.pluginManager.register(defaultProfilePlugin.id, defaultProfilePlugin);
   engine.pluginManager.register(webcamPlugin.id, webcamPlugin);
 
-  // Load ArtoolkitPlugin ESM (local vendor or CDN)
-  const mod = await import('./vendor/arjs-plugin-artoolkit/arjs-plugin-artoolkit.es.js');
-  const ArtoolkitPlugin = mod.ArtoolkitPlugin || mod.default;
-
   // Set up UI listeners BEFORE enable to avoid missing early 'ready'
   engine.eventBus.on('ar:workerReady', () => {
     log('Worker ready');
@@ -97,7 +95,6 @@ async function bootstrap() {
     log(`workerError: ${JSON.stringify(e)}`);
     setStatus('Worker error (see console)', 'error');
   });
-  engine.eventBus.on('ar:getMarker', (e) => console.log('[example] ar:getMarker', e));
   engine.eventBus.on('ar:markerFound', (d) => log(`markerFound: ${JSON.stringify(d)}`));
   engine.eventBus.on('ar:markerUpdated', (d) => log(`markerUpdated: ${JSON.stringify(d)}`));
   engine.eventBus.on('ar:markerLost', (d) => log(`markerLost: ${JSON.stringify(d)}`));
@@ -109,7 +106,8 @@ async function bootstrap() {
 
   // Create ARToolKit plugin and wire it to this engine context
   artoolkit = new ArtoolkitPlugin({
-    cameraParametersUrl: '/examples/vite-artoolkit/data/camera_para.dat',
+    wasmUrl,
+    cameraParametersUrl: '/data/camera_para.dat',
     minConfidence: 0.6,
   });
   await artoolkit.init(ctx);
@@ -200,7 +198,7 @@ async function loadMarker() {
     loadBtn.disabled = true;
     setStatus('Loading marker…', 'normal');
 
-    const patternUrl = '/examples/vite-artoolkit/data/patt.hiro';
+    const patternUrl = '/data/patt.hiro';
     const res = await artoolkit.loadMarker(patternUrl, 1);
     log(`loadMarker result: ${JSON.stringify(res)}`);
     setStatus(`Marker loaded (id=${res.markerId}). Show the marker to the camera.`, 'success');
