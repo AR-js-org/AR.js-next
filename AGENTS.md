@@ -69,8 +69,9 @@ milestone.
   errors are caught and logged).
 - **`engine:update` has two payload shapes** on the same event name. The
   engine emits `{ deltaTime, context }`; `FramePumpSystem` emits frames
-  `{ id, imageBitmap, width, height }`. Detection plugins read the frame
-  shape and ignore the other. Do not add a third.
+  `{ id, imageBitmap, width, height, timestamp }`, where `timestamp` is
+  `Date.now()` at emit, the clock the marker events use. Detection plugins
+  read the frame shape and ignore the other. Do not add a third.
 - **Marker events** (emitted by tracking plugins, consumed by renderers).
   The names are `EVENTS.*` in `src/core/components.js`, and the payloads are
   its `MarkerEventPayload`, `MarkerLostPayload` and `WorkerErrorPayload`

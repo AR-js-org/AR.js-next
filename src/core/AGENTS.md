@@ -43,6 +43,7 @@ Events: `plugin:registered` `{ pluginId, plugin }`, `plugin:enabled`,
 - `getContext()` returns `{ ecs, eventBus, pluginManager, engine }`; plugins
   receive exactly this object.
 - `update()` emits `engine:update` with `{ deltaTime, context }`. Frames on
-  the same event name come from `FramePumpSystem` with a different shape; see
-  the root `AGENTS.md`.
+  the same event name come from `FramePumpSystem` with a different shape,
+  `{ id, imageBitmap, width, height, timestamp }` (`timestamp` is `Date.now()`
+  at emit, the clock the marker events use); see the root `AGENTS.md`.
 - `Engine.VERSION` is read from `package.json` through a JSON import.
