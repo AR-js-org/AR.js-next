@@ -71,15 +71,18 @@ milestone.
   engine emits `{ deltaTime, context }`; `FramePumpSystem` emits frames
   `{ id, imageBitmap, width, height }`. Detection plugins read the frame
   shape and ignore the other. Do not add a third.
-- **Marker events** (emitted by tracking plugins, consumed by renderers):
+- **Marker events** (emitted by tracking plugins, consumed by renderers).
+  The names are `EVENTS.*` in `src/core/components.js`, and the payloads are
+  its `MarkerEventPayload`, `MarkerLostPayload` and `WorkerErrorPayload`
+  typedefs; keep the three in step with this table:
 
-  | Event              | Payload                                                          |
-  | ------------------ | ---------------------------------------------------------------- |
-  | `ar:markerFound`   | `{ markerId, type, matrix, confidence, vertex, dir, timestamp }` |
-  | `ar:markerUpdated` | `{ markerId, type, matrix, confidence, vertex, dir, timestamp }` |
-  | `ar:markerLost`    | `{ markerId, type, timestamp }`                                  |
-  | `ar:workerReady`   | `{}`                                                             |
-  | `ar:workerError`   | `{ message }`                                                    |
+  | Constant                | Event              | Payload                                                          |
+  | ----------------------- | ------------------ | ---------------------------------------------------------------- |
+  | `EVENTS.MARKER_FOUND`   | `ar:markerFound`   | `{ markerId, type, matrix, confidence, vertex, dir, timestamp }` |
+  | `EVENTS.MARKER_UPDATED` | `ar:markerUpdated` | `{ markerId, type, matrix, confidence, vertex, dir, timestamp }` |
+  | `EVENTS.MARKER_LOST`    | `ar:markerLost`    | `{ markerId, type, timestamp }`                                  |
+  | `EVENTS.WORKER_READY`   | `ar:workerReady`   | `{}`                                                             |
+  | `EVENTS.WORKER_ERROR`   | `ar:workerError`   | `{ message }`                                                    |
 
   `matrix` is a `Float32Array(16)`, column-major, ready for
   `THREE.Matrix4.fromArray()`. `type` is `"pattern"` or `"barcode"`, and a

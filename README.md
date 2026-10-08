@@ -113,10 +113,11 @@ This section clarifies where key behaviors belong.
   - Core provides the event bus; defaultProfilePlugin may seed a fallback projection, but the detection plugin should publish accurate intrinsics when available.
 
 - Marker events
-  - Emitted by detection plugins:
-    - ar:markerFound { markerId: string|number, matrix: Float32Array(16), timestamp?: number }
-    - ar:markerUpdated { markerId: string|number, matrix: Float32Array(16), timestamp?: number }
-    - ar:markerLost { markerId: string|number, timestamp?: number }
+  - Emitted by detection plugins; subscribe through the `EVENTS` constants rather than string literals. Payload types are the `MarkerEventPayload`, `MarkerLostPayload` and `WorkerErrorPayload` typedefs.
+    - `EVENTS.MARKER_FOUND` (`ar:markerFound`) and `EVENTS.MARKER_UPDATED` (`ar:markerUpdated`): `{ markerId: number, type: 'pattern' | 'barcode', matrix: Float32Array(16), confidence: number, vertex?: number[][], dir?: number, timestamp: number }`
+    - `EVENTS.MARKER_LOST` (`ar:markerLost`): `{ markerId: number, type: 'pattern' | 'barcode', timestamp: number }`
+    - `EVENTS.WORKER_READY` (`ar:workerReady`): `{}`; `EVENTS.WORKER_ERROR` (`ar:workerError`): `{ message: string }`
+  - A marker's identity is `type:markerId`: pattern and barcode IDs both start at 0. `vertex` holds the detected square's corners in the pixel coordinates of the submitted frame.
 
 - Example UI toggles (e.g., show/hide video, axis helpers)
   - Responsibility: examples (recommended)
