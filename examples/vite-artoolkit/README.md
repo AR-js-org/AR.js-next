@@ -64,6 +64,10 @@ example always runs the local code. The plugin comes from the registry.
   `./dist/artoolkit5.wasm`.
 - **`Failed to resolve import "@ar-js-org/ar.js-next"`, or a missing `dist/arjs-core.mjs`.**
   The core is not built. Run `npm run build` at the repository root (step 1).
+- **"Initialisation error: The core build is older than this example".** `dist/` was built
+  from a commit without the marker event constants, for example before switching to this
+  branch: the example would otherwise wait for "Worker ready" forever. Run `npm run build` at
+  the repository root again and reload. Rebuild whenever you switch branches.
 - **"Load markers" stays disabled.** It needs both "Worker ready" and a running webcam.
 - **Outlines sit off the markers.** `vertex` is in the pixels of the frame the plugin analysed.
   `src/markers.js` scales it to the displayed size, so check that the overlay canvas covers

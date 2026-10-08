@@ -14,6 +14,7 @@ import {
 import { ArtoolkitPlugin } from '@ar-js-org/arjs-plugin-artoolkit';
 import wasmUrl from '@ar-js-org/artoolkit5-wasm/dist/artoolkit5.wasm?url';
 import { markerKey, scaleVertex, upsertMarker, removeMarker } from './markers.js';
+import { missingCoreEvents } from './core-check.js';
 
 const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
@@ -119,6 +120,16 @@ function render() {
 }
 
 async function bootstrap() {
+  // A core built before the marker event constants existed would leave them
+  // undefined, and the page would wait for "Worker ready" forever.
+  const missing = missingCoreEvents(EVENTS);
+  if (missing.length) {
+    throw new Error(
+      `The core build is older than this example (EVENTS lacks ${missing.join(', ')}). ` +
+        'Run `npm run build` at the repository root, then reload.',
+    );
+  }
+
   engine = new Engine();
   ctx = engine.getContext();
 
@@ -250,5 +261,5 @@ startBtn.disabled = true;
 bootstrap().catch((e) => {
   console.error('[vite-artoolkit] bootstrap error:', e);
   log(`Initialisation error: ${e?.message || e}`);
-  setStatus('Initialisation error (see the log)', 'error');
+  setStatus(`Initialisation error: ${e?.message || e}`, 'error');
 });
