@@ -1,60 +1,70 @@
-# AR.js Core ECS + ArtoolkitPlugin example
+# AR.js-next + arjs-plugin-artoolkit (Vite)
 
-This example shows how to use the ArtoolkitPlugin with AR.js Core:
+Tracks the Hiro pattern and the 3x3 barcode 0 with
+[`@ar-js-org/arjs-plugin-artoolkit`](https://www.npmjs.com/package/@ar-js-org/arjs-plugin-artoolkit)
+installed from npm. Each marker in view is outlined over the webcam and listed with its
+`type:markerId` and confidence.
 
-- Capture video via the webcam source plugin
-- Stream frames as ImageBitmap to the worker (frame pump)
-- Show the live webcam feed in a viewport
-- Detect the HIRO marker and receive markerFound/Updated/Lost events
+This is a standalone Vite project. The core comes from this repository (`file:../..`), so the
+example always runs the local code. The plugin comes from the registry.
 
-## Quick start
+## Run it
 
-1. Serve the repository root so example and vendor assets resolve:
+1. Build the core at the repository root. The example links the root's `dist/`, which a fresh
+   clone does not have:
 
-- `python3 -m http.server 8080`
-- or `npx http-server -p 8080`
+   ```bash
+   npm install
+   npm run build
+   ```
 
-2. Open http://localhost:8080/examples/vite-artoolkit/index.html
-3. Click “Start Webcam” to begin streaming frames and show the live video
-4. Click “Load Marker” to load the HIRO pattern, then show it to the camera
+2. Install and start the example:
 
-## Buttons
+   ```bash
+   cd examples/vite-artoolkit
+   npm install
+   npm run dev
+   ```
 
-- Start Webcam
-  - Initializes capture (webcam plugin)
-  - Attaches the `<video>` element to the on‑page viewport
-  - Starts the FramePumpSystem to emit `ImageBitmap` frames via `engine:update`
-- Stop
-  - Stops the frame pump and disposes capture
-- Load Marker
-  - Calls `plugin.loadMarker('/examples/vite-artoolkit/data/patt.hiro', 1)`
+3. Open http://localhost:5174/. Camera access needs `localhost` or HTTPS.
+4. Wait for "Worker ready", click **Start Webcam**, then **Load markers**. The button enables
+   once the first frame has reached the plugin, which builds its detector from that frame's
+   size.
+5. Show the [Hiro marker](https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png)
+   and a 3x3 **barcode 0**, for example from the
+   [artoolkit-barcode-markers-collection](https://github.com/nicolocarpignoli/artoolkit-barcode-markers-collection).
+   Pattern 0 and barcode 0 are different markers, which is why the HUD shows `pattern:0` and
+   `barcode:0`.
 
-## Video viewport
+`npm run build` and `npm run preview` produce and serve a production build in `dist/`.
 
-The webcam plugin creates `<video id="arjs-video">` and positions it offscreen. The example moves it into a visible container with:
+## How it is wired
 
-```js
-const frameSource = CaptureSystem.getFrameSource(ctx);
-const videoEl = frameSource.element;
-// detach from body, append inside #viewport, and override styles to be visible
-```
-
-## Plugin notes
-
-- The example imports the plugin ESM from a local vendor folder. Ensure `assets/` (worker and ARToolKit chunks) sit alongside the ESM file.
-- Alternatively, import from the CDN:
-
-```js
-const mod =
-  await import('https://cdn.jsdelivr.net/gh/AR-js-org/arjs-plugin-artoolkit@main/dist/arjs-plugin-artoolkit.esm.js');
-```
+- `src/main.js`:
+  - registers `ArtoolkitPlugin` through `pluginManager.register/enable` and checks both results,
+    which never throw;
+  - subscribes with the core's `EVENTS.MARKER_FOUND/UPDATED/LOST` and
+    `EVENTS.WORKER_READY/ERROR`.
+- `src/markers.js` keeps the markers in view, keyed `type:markerId`, and scales `vertex` from
+  frame pixels to the displayed video size. It is DOM-free and tested from the root suite
+  (`tests/vite-artoolkit-markers.test.js`).
+- The ARToolKit WASM binary is imported with Vite's `?url`:
+  `import wasmUrl from '@ar-js-org/artoolkit5-wasm/dist/artoolkit5.wasm?url'`.
+- `public/data/` holds `camera_para.dat` and `patt.hiro`, served at `/data/`.
 
 ## Troubleshooting
 
-- Load Marker is disabled:
-  - Wait for “Worker ready”. The button is enabled on `ar:workerReady` or when `plugin.workerReady` is true.
-- No detections:
-  - Ensure the frame pump is running (Start Webcam pressed)
-  - Check that the worker assets and `camera_para.dat`/`patt.hiro` URLs return 200
-- Lint errors about browser APIs:
-  - Use `globalThis.createImageBitmap`, `globalThis.OffscreenCanvas`, and cancel rVFC via `video.cancelVideoFrameCallback`
+- **The page never reaches "Worker ready", and a `worker-*.js` request 404s under
+  `node_modules/.vite/deps/`.** Vite pre-bundled the plugin, which moves it away from its
+  worker. `vite.config.js` excludes it with `optimizeDeps.exclude`; keep that entry, and
+  delete `node_modules/.vite` after changing it.
+- **`Missing "./dist/artoolkit5.wasm" specifier in "@ar-js-org/artoolkit5-wasm"`.**
+  `@ar-js-org/artoolkit5-wasm` 0.4.0 ships the binary but does not export it. The alias in
+  `vite.config.js` maps the import to the file; keep it until the package exports
+  `./dist/artoolkit5.wasm`.
+- **`Failed to resolve import "@ar-js-org/ar.js-next"`, or a missing `dist/arjs-core.mjs`.**
+  The core is not built. Run `npm run build` at the repository root (step 1).
+- **"Load markers" stays disabled.** It needs both "Worker ready" and a running webcam.
+- **Outlines sit off the markers.** `vertex` is in the pixels of the frame the plugin analysed.
+  `src/markers.js` scales it to the displayed size, so check that the overlay canvas covers
+  exactly the video element.
