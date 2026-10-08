@@ -9,6 +9,8 @@
 
 A renderer-agnostic AR library built on a modern Entity-Component-System (ECS) architecture with a plugin system.
 
+What changed in each release, including every breaking change, is in [CHANGELOG.md](CHANGELOG.md).
+
 ## 🚀 Installing
 
 Install from npm (recommended):

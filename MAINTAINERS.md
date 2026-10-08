@@ -42,7 +42,8 @@ order below is load-bearing.
 1. Milestone has no open items; CI is green on `dev`.
 2. On a branch off `dev`: bump `version` in `package.json` (and
    `package-lock.json`, via `npm version <x.y.z> --no-git-tag-version`),
-   update `README.md` / upgrade notes. PR into `dev`, merge.
+   date the changelog (see [Changelog](#changelog)), update `README.md` /
+   upgrade notes. PR into `dev`, merge.
 3. PR `dev` → `main`, merge.
 4. Tag **the merge commit on `main`**, after the merge, never before:
 
@@ -60,6 +61,20 @@ order below is load-bearing.
 
 6. Verify: the GitHub Release exists with its zip and npm shows the new
    version (`npm view @ar-js-org/ar.js-next version`). Close the milestone.
+
+## Changelog
+
+`CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+PRs with a user-visible change add their entry under `## [Unreleased]` as they
+land, so at release time the section only needs checking and dating:
+
+1. Check `## [Unreleased]` against the milestone's closed issues and merged
+   PRs. Every breaking change is marked **Breaking** and says what consumers
+   must change.
+2. In the version-bump commit, rename it to `## [X.Y.Z] - YYYY-MM-DD` and add
+   a new, empty `## [Unreleased]` above it.
+3. Update the compare links at the bottom: `[Unreleased]` becomes
+   `…/compare/vX.Y.Z...HEAD`, and add `[X.Y.Z]: …/compare/v<previous>...vX.Y.Z`.
 
 ## Recovering a partial release
 
