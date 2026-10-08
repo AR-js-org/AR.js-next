@@ -126,6 +126,12 @@ Core code must stay DOM-free so it runs under node. Browser-only code
 `docs`, `chore`, `refactor`, `test`, `ci`, `perf`. Imperative, lower case, no
 trailing period. Breaking changes take `!` and a `BREAKING CHANGE:` footer.
 
+A PR with a user-visible change adds an entry under `## [Unreleased]` in
+`CHANGELOG.md` ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+groups; mark breaking changes **Breaking** and say what consumers must
+change). Internal-only changes (tests, CI, refactors) need none. Releases date
+the section; see `MAINTAINERS.md`.
+
 ## Git
 
 - Branch flow: feature branch → `dev` → `main`, through pull requests. Never
