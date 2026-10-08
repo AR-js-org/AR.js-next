@@ -17,10 +17,17 @@ const ROOT = resolve(__dirname, '..');
 const GUARD = join(ROOT, '.claude/hooks/guard-protected-branches.mjs');
 const FORMAT = join(ROOT, '.claude/hooks/format-on-edit.mjs');
 
-// Identity for the fixture repositories only, through the environment so no
-// command line carries it.
+// Git in the fixtures, and in the hooks run against them, must see nothing of
+// whoever runs the tests. Every inherited GIT_* variable is dropped: config
+// injected through GIT_CONFIG_COUNT/KEY/VALUE or GIT_CONFIG_PARAMETERS would
+// otherwise sign or hook the fixture commits (a signing prompt stalls setup
+// until it times out), and GIT_DIR/GIT_INDEX_FILE, set when the tests run
+// inside a git hook, would point git at this repository instead of a fixture.
+// The guard suite then adds an empty global configuration and no system one.
+// Identity comes through the environment, so no command line carries it.
 const GIT_ENV = {
-  ...process.env,
+  ...Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^GIT_/i.test(key))),
+  GIT_CONFIG_NOSYSTEM: '1',
   GIT_AUTHOR_NAME: 'fixture',
   GIT_AUTHOR_EMAIL: 'fixture@example.invalid',
   GIT_COMMITTER_NAME: 'fixture',
@@ -36,6 +43,7 @@ function git(cwd, ...args) {
 function runHook(hook, input) {
   const r = spawnSync(process.execPath, [hook], {
     input: JSON.stringify(input),
+    env: GIT_ENV,
     encoding: 'utf8',
   });
   return { status: r.status, stdout: r.stdout, stderr: r.stderr };
@@ -57,6 +65,9 @@ describe('guard-protected-branches', () => {
 
   beforeAll(() => {
     base = mkdtempSync(join(tmpdir(), 'guard-'));
+    // Inside `base`, so it exists only while this suite runs and goes with it.
+    GIT_ENV.GIT_CONFIG_GLOBAL = join(base, 'gitconfig');
+    writeFileSync(GIT_ENV.GIT_CONFIG_GLOBAL, '');
     const remote = join(base, 'remote.git');
     git(base, 'init', '--bare', '-b', 'main', remote);
 
@@ -79,7 +90,8 @@ describe('guard-protected-branches', () => {
     git(unfetched, 'add', '.');
     git(unfetched, 'commit', '-m', 'init');
     git(unfetched, 'remote', 'add', 'origin', remote);
-  });
+    // A dozen git processes: slow where every spawn is scanned, as on Windows.
+  }, 60000);
 
   afterAll(() => {
     rmSync(base, { recursive: true, force: true });
