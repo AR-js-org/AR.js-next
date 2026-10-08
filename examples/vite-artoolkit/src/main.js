@@ -163,7 +163,9 @@ async function bootstrap() {
   });
   // Frames carry the size `vertex` is measured in.
   engine.eventBus.on(EVENTS.ENGINE_UPDATE, (frame) => {
-    if (!frame?.imageBitmap) return;
+    // A frame produced while the webcam was stopping must not mark frames as
+    // flowing again: "Load markers" would enable with no camera.
+    if (!cameraStarted || !frame?.imageBitmap) return;
     frameSize = { width: frame.width, height: frame.height };
     if (!framesFlowing) {
       framesFlowing = true;
@@ -220,11 +222,15 @@ async function startWebcam() {
 
 async function stopWebcam() {
   if (!cameraStarted) return;
-  FramePumpSystem.stop(ctx);
-  await CaptureSystem.dispose(ctx);
-  videoElement()?.remove();
+  // Stopped first, so a frame still in flight is ignored by the listener.
   cameraStarted = false;
   framesFlowing = false;
+  // Taken before dispose, which removes the frame-source resource the
+  // element is looked up from.
+  const videoEl = videoElement();
+  FramePumpSystem.stop(ctx);
+  await CaptureSystem.dispose(ctx);
+  videoEl?.remove();
   markers.clear();
   render();
   stopBtn.disabled = true;
