@@ -6,6 +6,7 @@
   "module": "dist/arjs-core.mjs",
   "exports": {
     ".": {
+      "types": "./types/src/index.d.ts",
       "import": "./dist/arjs-core.mjs",
       "require": "./dist/arjs-core.js",
       "default": "./dist/arjs-core.mjs"
@@ -27,7 +28,8 @@
     "serve:vite": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:types": "tsc -p tests/typecheck"
   },
   "repository": {
     "type": "git",
