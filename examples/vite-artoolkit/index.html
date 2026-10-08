@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>AR.js Core ECS + ArtoolkitPlugin (CDN)</title>
+    <title>AR.js-next + ArtoolkitPlugin</title>
     <style>
       html,
       body {
@@ -88,28 +88,56 @@
         z-index: 1 !important;
         object-fit: cover;
       }
+      .viewport {
+        position: relative;
+      }
+      /* Marker outlines, drawn over the video at its displayed size. */
+      #overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .hud {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 12px;
+        font: 13px/1.6 monospace;
+        min-height: 1.6em;
+      }
+      .hud li::before {
+        content: '● ';
+        color: #9ef01a;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>AR.js Core ECS + ArtoolkitPlugin</h1>
-      <p>Use the buttons to start/stop the webcam and load the HIRO pattern marker.</p>
+      <h1>AR.js-next + ArtoolkitPlugin</h1>
+      <p>
+        Start the webcam, then load the markers: the Hiro pattern and the 3x3 barcode 0. Show
+        either, or both, to the camera.
+      </p>
 
       <div id="status" class="status">Initializing…</div>
 
       <div class="controls">
         <button id="startBtn">Start Webcam</button>
         <button id="stopBtn" disabled>Stop</button>
-        <button id="loadBtn" disabled>Load Marker</button>
+        <button id="loadBtn" disabled>Load markers</button>
       </div>
 
-      <!-- New: viewport where we will insert the video element -->
-      <div id="viewport" class="viewport"></div>
+      <!-- The webcam's video element is moved in here; the overlay sits on top. -->
+      <div id="viewport" class="viewport"><canvas id="overlay"></canvas></div>
+
+      <h3>Markers in view</h3>
+      <ul id="hud" class="hud"></ul>
 
       <h3>Event Log</h3>
       <div id="log" class="log"></div>
     </div>
 
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

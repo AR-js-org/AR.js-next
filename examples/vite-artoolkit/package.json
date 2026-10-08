@@ -1,0 +1,18 @@
+{
+  "name": "arjs-next-example-vite-artoolkit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ar-js-org/ar.js-next": "file:../..",
+    "@ar-js-org/arjs-plugin-artoolkit": "^0.3.0",
+    "@ar-js-org/artoolkit5-wasm": "^0.4.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.0"
+  }
+}

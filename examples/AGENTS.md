@@ -4,8 +4,9 @@
   :5173. Examples that import `../../dist/arjs-core.mjs` need `npm run build`
   first.
 - Camera access requires `localhost` or HTTPS.
-- `data/` folders hold binary assets (`camera_para.dat`, `.patt` files) and
-  are excluded from prettier and eslint. Do not reformat them.
+- `data/` folders (`public/data/` in the standalone examples) hold binary
+  assets (`camera_para.dat`, `.patt` files) and are excluded from prettier and
+  eslint. Do not reformat them.
 
 ## Plugin packages come from npm, not from copies
 
@@ -18,11 +19,15 @@ Vite projects with their own `package.json`:
   "type": "module",
   "dependencies": {
     "@ar-js-org/ar.js-next": "file:../..",
-    "@ar-js-org/arjs-plugin-artoolkit": "^0.3.0"
+    "@ar-js-org/arjs-plugin-artoolkit": "^0.3.0",
+    "@ar-js-org/artoolkit5-wasm": "^0.4.0"
   },
-  "devDependencies": { "vite": "^7" }
+  "devDependencies": { "vite": "^7.3.0" }
 }
 ```
+
+`examples/vite-artoolkit/` is the reference: copy its `vite.config.js`, which
+an example using arjs-plugin-artoolkit cannot run without.
 
 - The core comes from `file:../..`, so the example always exercises the local
   code; the plugins come from the registry.
@@ -35,6 +40,18 @@ Vite projects with their own `package.json`:
   import wasmUrl from '@ar-js-org/artoolkit5-wasm/dist/artoolkit5.wasm?url';
   new ArtoolkitPlugin({ wasmUrl, cameraParametersUrl });
   ```
+
+  `@ar-js-org/artoolkit5-wasm` 0.4.0 ships the binary but its `exports` map
+  only exposes `"."`, so this import fails with `Missing
+"./dist/artoolkit5.wasm" specifier` unless `vite.config.js` aliases it to the
+  file (`resolve.alias`, see `examples/vite-artoolkit/vite.config.js`). Drop
+  the alias once the package exports the binary.
+
+- `vite.config.js` must exclude the plugin from dev pre-bundling:
+  `optimizeDeps: { exclude: ['@ar-js-org/arjs-plugin-artoolkit'] }`. The
+  plugin builds its worker URL relative to its own module; pre-bundling moves
+  the module into `node_modules/.vite/deps`, the worker 404s and the page never
+  reaches "Worker ready".
 
 - Register plugins through `pluginManager.register/enable`, and call
   `loadMarker`/`trackBarcode` only once frames are flowing.

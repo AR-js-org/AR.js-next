@@ -58,6 +58,14 @@ jobs:
           npm run build:types
           npm run test:types
 
+      # The example links this repository's dist/ (file:../..), so it builds
+      # after the library. Catches a core change, or a plugin or Vite release,
+      # that breaks a consumer's install or production build.
+      - name: Build vite-artoolkit example
+        run: |
+          npm --prefix examples/vite-artoolkit ci
+          npm --prefix examples/vite-artoolkit run build
+
       - name: Run tests (with coverage)
         run: npm run test:coverage
         env:
