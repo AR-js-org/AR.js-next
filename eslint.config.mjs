@@ -17,6 +17,9 @@ export default [
       'node_modules/',
       'coverage/',
       'types/',
+      // TypeScript files checked by `npm run test:types` (tsc), which this
+      // JavaScript-only config cannot parse.
+      'tests/typecheck/**',
     ],
   },
   js.configs.recommended,

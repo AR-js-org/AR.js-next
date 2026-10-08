@@ -51,6 +51,13 @@ jobs:
       - name: Build (Vite)
         run: npm run build:vite
 
+      # The public declarations, checked the way a consumer imports them
+      # (package.json "exports", moduleResolution "bundler").
+      - name: Type declarations
+        run: |
+          npm run build:types
+          npm run test:types
+
       # The example links this repository's dist/ (file:../..), so it builds
       # after the library. Catches a core change, or a plugin or Vite release,
       # that breaks a consumer's install or production build.

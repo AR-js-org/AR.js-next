@@ -1,0 +1,15 @@
+{
+  // Type-checks tests/typecheck/*.ts against the published declarations, resolving
+  // @ar-js-org/ar.js-next through package.json "exports" like a consumer.
+  // Run after `npm run build:types`.
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "es2022",
+    "lib": ["es2022", "dom"],
+    "strict": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "types": []
+  },
+  "include": ["*.ts"]
+}

@@ -13,6 +13,13 @@ export {
   QUALITY_TIERS,
 } from './core/components.js';
 
+// Marker event payload types, re-exported for TypeScript consumers. JSDoc
+// only: no runtime import, and tsc emits them as `export type` declarations.
+/** @typedef {import('./core/components.js').MarkerType} MarkerType */
+/** @typedef {import('./core/components.js').MarkerEventPayload} MarkerEventPayload */
+/** @typedef {import('./core/components.js').MarkerLostPayload} MarkerLostPayload */
+/** @typedef {import('./core/components.js').WorkerErrorPayload} WorkerErrorPayload */
+
 // Systems
 export { CaptureSystem } from './systems/capture-system.js';
 export { FramePumpSystem } from './systems/frame-pump-system.js';
