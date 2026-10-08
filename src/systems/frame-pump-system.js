@@ -67,6 +67,12 @@ export class FramePumpSystem {
       }
     }
 
+    // Every frame goes out through here, so none can miss its timestamp:
+    // Date.now(), the clock the tracking plugins stamp marker events with.
+    function emitFrameEvent(payload) {
+      bus.emit('engine:update', { id: ++state._fid, ...payload, timestamp: Date.now() });
+    }
+
     async function emitFrame() {
       const w = video.videoWidth || ref.width || 640;
       const h = video.videoHeight || ref.height || 480;
@@ -76,7 +82,7 @@ export class FramePumpSystem {
       try {
         if (typeof globalThis.createImageBitmap === 'function') {
           const imageBitmap = await globalThis.createImageBitmap(video);
-          bus.emit('engine:update', { id: ++state._fid, imageBitmap, width: w, height: h });
+          emitFrameEvent({ imageBitmap, width: w, height: h });
           return;
         }
       } catch {
@@ -93,10 +99,10 @@ export class FramePumpSystem {
 
         if (typeof globalThis.createImageBitmap === 'function') {
           const imageBitmap = await globalThis.createImageBitmap(offscreen);
-          bus.emit('engine:update', { id: ++state._fid, imageBitmap, width: w, height: h });
+          emitFrameEvent({ imageBitmap, width: w, height: h });
         } else {
           // As a last resort, emit without ImageBitmap (worker will try a slower fallback)
-          bus.emit('engine:update', { id: ++state._fid, width: w, height: h });
+          emitFrameEvent({ width: w, height: h });
         }
       } catch {
         // ignore transient failures

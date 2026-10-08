@@ -51,6 +51,13 @@ jobs:
       - name: Build (Vite)
         run: npm run build:vite
 
+      # The public declarations, checked the way a consumer imports them
+      # (package.json "exports", moduleResolution "bundler").
+      - name: Type declarations
+        run: |
+          npm run build:types
+          npm run test:types
+
       - name: Run tests (with coverage)
         run: npm run test:coverage
         env:
