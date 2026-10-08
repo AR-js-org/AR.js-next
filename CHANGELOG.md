@@ -32,6 +32,8 @@ Planned as 0.2.1. No breaking changes.
   `"node16"`, because `exports` had no `types` condition, and typed it as `any` (#21).
 - The README's marker event payloads described the 0.1.x shape; they now match the contract
   (`markerId`, `type`, `matrix`, `confidence`, `vertex`, `dir`, `timestamp`) (#21).
+- `FramePumpSystem` no longer emits a frame after `stop()`: a frame whose `ImageBitmap` was
+  still being created when the pump stopped is dropped and its bitmap closed (#24).
 
 ### Development
 
