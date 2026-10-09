@@ -130,8 +130,13 @@ export const videoPlugin = {
             });
         };
 
-        videoElement.onerror = (error) => {
-          reject(new Error(`Failed to load video: ${error.message || 'Unknown error'}`));
+        // onerror receives a plain Event with no message. The reason, when the
+        // browser gives one, is the element's MediaError.
+        videoElement.onerror = () => {
+          const reason = videoElement.error?.message;
+          reject(
+            new Error(`Failed to load video: ${config.sourceUrl}${reason ? ` (${reason})` : ''}`),
+          );
         };
       });
 
