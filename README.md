@@ -228,7 +228,7 @@ If the camera doesn’t start, click to allow autoplay. On Safari, prefer HTTPS 
 
 ## 🤝 Contributing
 
-We welcome all contributions! Before you begin, please review our **[CONTRIBUTING.md](https://github.com/AR-js-org/AR.js-core/blob/main/CONTRIBUTING.md)** for guidelines and our **[CODE_OF_CONDUCT.md](https://github.com/AR-js-org/AR.js-core/blob/main/CODE_OF_CONDUCT.md)**. A great way to get started is by exploring open issues and pull requests.
+We welcome all contributions! Before you begin, please review our **[CONTRIBUTING.md](CONTRIBUTING.md)** for guidelines and our **[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)**. A great way to get started is by exploring open issues and pull requests.
 
 ## ❓ Troubleshooting (Common)
 

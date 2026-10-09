@@ -113,8 +113,7 @@ Core code must stay DOM-free so it runs under node. Browser-only code
 ## Known drift (do not "fix" in passing; each needs its own change)
 
 - Naming still says "core" in places: `Engine.NAME` is
-  `'@ar-js-org/ar.js-core'`, the repository URL points at `AR.js-core.git`,
-  the build outputs `dist/arjs-core.*`.
+  `'@ar-js-org/ar.js-core'`, and the build outputs `dist/arjs-core.*`.
 - `docs/ECS_ARCHITECTURE.md` and `docs/IMPLEMENTATION_SUMMARY.md` still
   describe the legacy classes removed in #11.
 
