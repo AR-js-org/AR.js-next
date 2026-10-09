@@ -206,19 +206,22 @@ You do not need to commit `dist/`; it is recreated for each build or publish cyc
 
 ## 🏃 Running Examples
 
-You can use Vite (recommended) during development.
-
-Vite:
+Run the examples with the Vite dev server:
 
 ```bash
 npm install
 npm run dev:vite
-npm run build:vite
-npm run serve:vite
 ```
+
+It opens `http://localhost:5173/examples/index.html`.
 
 - Examples index: examples/index.html
 - Minimal ECS example: examples/minimal/index.html
+- Image source example: examples/basic-ecs/image-example.html
+
+The examples import the built library from `dist/`, which `npm install` builds. After changing
+`src/`, run `npm run build` and reload. There is no `vite preview` step: the build is a library,
+so its output holds no pages to serve.
 
 If the camera doesn’t start, click to allow autoplay. On Safari, prefer HTTPS in dev.
 
