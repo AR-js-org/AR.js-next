@@ -41,8 +41,9 @@ Planned as 0.2.1. No breaking changes.
   and format edited files, a maintainers guide and a release issue template (#19).
 - CI type-checks the public declarations as a consumer imports them, and builds the
   `vite-artoolkit` example (#21, #22).
-- Node 24 LTS (`.nvmrc` v24.21.0) for development and CI. Dev dependencies are updated within
-  their majors, and `npm audit` reports no vulnerabilities, down from 21 (#26).
+- Node 24 LTS (`.nvmrc` v24.21.0) for development and CI. Dev dependencies are updated, eslint
+  to 10 since 9 is no longer supported, and `npm audit` reports no vulnerabilities, down from 21
+  (#26).
 
 ## [0.2.0] - 2026-01-09
 
