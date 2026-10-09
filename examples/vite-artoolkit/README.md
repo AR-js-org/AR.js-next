@@ -59,9 +59,8 @@ example always runs the local code. The plugin comes from the registry.
   worker. `vite.config.js` excludes it with `optimizeDeps.exclude`; keep that entry, and
   delete `node_modules/.vite` after changing it.
 - **`Missing "./dist/artoolkit5.wasm" specifier in "@ar-js-org/artoolkit5-wasm"`.**
-  `@ar-js-org/artoolkit5-wasm` 0.4.0 ships the binary but does not export it. The alias in
-  `vite.config.js` maps the import to the file; keep it until the package exports
-  `./dist/artoolkit5.wasm`.
+  The installed `@ar-js-org/artoolkit5-wasm` is 0.4.0, which ships the binary but does not
+  export it. The example needs 0.4.1 or later: run `npm install` in this folder again.
 - **`Failed to resolve import "@ar-js-org/ar.js-next"`, or a missing `dist/arjs-core.mjs`.**
   The core is not built. Run `npm run build` at the repository root (step 1).
 - **"Initialisation error: The core build is older than this example".** `dist/` was built

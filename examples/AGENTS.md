@@ -20,7 +20,7 @@ Vite projects with their own `package.json`:
   "dependencies": {
     "@ar-js-org/ar.js-next": "file:../..",
     "@ar-js-org/arjs-plugin-artoolkit": "^0.3.0",
-    "@ar-js-org/artoolkit5-wasm": "^0.4.0"
+    "@ar-js-org/artoolkit5-wasm": "^0.4.1"
   },
   "devDependencies": { "vite": "^7.3.0" }
 }
@@ -41,11 +41,10 @@ an example using arjs-plugin-artoolkit cannot run without.
   new ArtoolkitPlugin({ wasmUrl, cameraParametersUrl });
   ```
 
-  `@ar-js-org/artoolkit5-wasm` 0.4.0 ships the binary but its `exports` map
-  only exposes `"."`, so this import fails with `Missing
-"./dist/artoolkit5.wasm" specifier` unless `vite.config.js` aliases it to the
-  file (`resolve.alias`, see `examples/vite-artoolkit/vite.config.js`). Drop
-  the alias once the package exports the binary.
+  This needs `@ar-js-org/artoolkit5-wasm` 0.4.1 or later, the first to export
+  `./dist/artoolkit5.wasm`. With 0.4.0 the import fails with `Missing
+"./dist/artoolkit5.wasm" specifier`; do not work around it with a
+  `resolve.alias`, depend on `^0.4.1`.
 
 - `vite.config.js` must exclude the plugin from dev pre-bundling:
   `optimizeDeps: { exclude: ['@ar-js-org/arjs-plugin-artoolkit'] }`. The
