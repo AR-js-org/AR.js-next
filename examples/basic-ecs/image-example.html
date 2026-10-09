@@ -10,9 +10,13 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        background: #111;
         color: #eee;
         font-family: system-ui, sans-serif;
+      }
+      /* On html only. A background on body too would be painted above the
+         image, which sits at z-index -2. */
+      html {
+        background: #111;
       }
       #app {
         position: relative;
@@ -86,7 +90,7 @@
             id="url"
             type="text"
             placeholder="Enter image URL..."
-            value="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Example.jpg/640px-Example.jpg"
+            value="https://raw.githubusercontent.com/AR-js-org/artoolkit5-wasm/main/examples/data/marker_05_3x3.jpg"
           />
           <button id="load">Load</button>
           <button id="clear">Clear</button>
