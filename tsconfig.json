@@ -13,13 +13,16 @@
     // only output d.ts files
     "emitDeclarationOnly": true,
     /* Module Resolution Options */
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     // Types should go into this directory.
     // Removing this would place the .d.ts files
     // next to the .js files
     "outDir": "types",
     // go to js file when using IDE functions like
     // "Go to Definition" in VSCode
-    "declarationMap": true
+    "declarationMap": true,
+    // TypeScript 6 turns strict on by default, which types JSDoc {Object} as
+    // Object instead of any and narrows the published declarations.
+    "strict": false
   }
 }

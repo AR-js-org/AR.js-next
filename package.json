@@ -1,11 +1,12 @@
 {
   "name": "@ar-js-org/ar.js-next",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "core library of AR.js",
   "main": "dist/arjs-core.js",
   "module": "dist/arjs-core.mjs",
   "exports": {
     ".": {
+      "types": "./types/src/index.d.ts",
       "import": "./dist/arjs-core.mjs",
       "require": "./dist/arjs-core.js",
       "default": "./dist/arjs-core.mjs"
@@ -24,14 +25,14 @@
     "prepare": "husky install && npm run build",
     "prepack": "npm run build",
     "prepublishOnly": "npm run build",
-    "serve:vite": "vite preview",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:types": "tsc -p tests/typecheck"
   },
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/AR-js-org/AR.js-core.git"
+    "url": "git+https://github.com/AR-js-org/AR.js-next.git"
   },
   "keywords": [
     "AR.js",
@@ -41,16 +42,18 @@
   "author": "@kalwalt",
   "license": "MIT",
   "devDependencies": {
-    "@vitest/coverage-v8": "^4.0.16",
-    "@vitest/ui": "^4.0.16",
-    "eslint": "^9.39.2",
+    "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/ui": "^5.0.3",
+    "eslint": "^10.12.0",
     "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.13.0",
     "husky": "^9.1.7",
-    "lint-staged": "16.2.7",
-    "prettier": "^3.7.4",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.0",
-    "vitest": "^4.0.16"
+    "lint-staged": "16.4.0",
+    "prettier": "^3.9.9",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,md,json}": [
@@ -67,5 +70,9 @@
     "types",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "homepage": "https://github.com/AR-js-org/AR.js-next#readme",
+  "bugs": {
+    "url": "https://github.com/AR-js-org/AR.js-next/issues"
+  }
 }

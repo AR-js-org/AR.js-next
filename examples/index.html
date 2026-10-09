@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>AR.js-core Examples</title>
+    <title>AR.js-next Examples</title>
     <style>
       :root {
         color-scheme: dark light;
@@ -82,7 +82,7 @@
   </head>
   <body>
     <div class="wrap">
-      <h1>AR.js-core Examples</h1>
+      <h1>AR.js-next Examples</h1>
       <p>Select an example to run locally while developing:</p>
       <ul>
         <li>
@@ -98,9 +98,14 @@
           </a>
         </li>
         <li>
-          <a href="/examples/vite-artoolkit/index.html">
+          <a href="http://localhost:5174/">
             AR.js-next plus arjs-plugin-artoolkit Example
-            <small>Video as input source using the video plugin</small>
+            <small>
+              Hiro pattern and 3x3 barcode 0 tracked with the npm plugin, outlined over the webcam.
+              A standalone Vite project: run <code>npm run build</code> here, then
+              <code>cd examples/vite-artoolkit &amp;&amp; npm install &amp;&amp; npm run dev</code>;
+              this link opens its dev server on port 5174.
+            </small>
           </a>
         </li>
       </ul>

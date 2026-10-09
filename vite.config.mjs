@@ -18,7 +18,9 @@ export default defineConfig({
       entry: 'src/index.js',
       name: 'ARJSCore', // used for UMD/IIFE only; kept for completeness
     },
-    rollupOptions: {
+    // Rolldown (vite 8). No `interop`: Rolldown does not support it, and with
+    // no externals there is nothing to interoperate with.
+    rolldownOptions: {
       external: [],
       output: [
         {
@@ -26,14 +28,12 @@ export default defineConfig({
           entryFileNames: 'arjs-core.mjs',
           exports: 'named',
           dir: 'dist',
-          interop: 'auto',
         },
         {
           format: 'cjs',
           entryFileNames: 'arjs-core.js',
           exports: 'named',
           dir: 'dist',
-          interop: 'auto',
         },
       ],
     },

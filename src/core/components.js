@@ -60,6 +60,13 @@ export const EVENTS = {
   PLUGIN_REGISTERED: 'plugin:registered',
   PLUGIN_ENABLED: 'plugin:enabled',
   PLUGIN_DISABLED: 'plugin:disabled',
+
+  // Marker tracking events (emitted by detection plugins, see AGENTS.md)
+  MARKER_FOUND: 'ar:markerFound',
+  MARKER_UPDATED: 'ar:markerUpdated',
+  MARKER_LOST: 'ar:markerLost',
+  WORKER_READY: 'ar:workerReady',
+  WORKER_ERROR: 'ar:workerError',
 };
 
 // Capture States
@@ -93,3 +100,42 @@ export const QUALITY_TIERS = {
   HIGH: 'high',
   ULTRA: 'ultra',
 };
+
+/**
+ * Marker family. Pattern and barcode markers have independent ID registries
+ * that both start at 0, so a marker's identity is the pair `type:markerId`.
+ *
+ * @typedef {'pattern' | 'barcode'} MarkerType
+ */
+
+/**
+ * Payload of `ar:markerFound` and `ar:markerUpdated`.
+ *
+ * @typedef {Object} MarkerEventPayload
+ * @property {number} markerId - Marker ID within its family
+ * @property {MarkerType} type - Marker family
+ * @property {Float32Array} matrix - 4x4 pose, column-major, ready for
+ *   `THREE.Matrix4.fromArray()`
+ * @property {number} confidence - Detection confidence, 0 to 1
+ * @property {number[][]} [vertex] - The detected square's four corners,
+ *   `[[x, y], …]`, in the pixel coordinates of the submitted frame
+ * @property {number} [dir] - Marker rotation, 0 to 3; the printed top-left
+ *   corner is `vertex[(4 - dir) % 4]`
+ * @property {number} timestamp - `Date.now()` when the event was emitted
+ */
+
+/**
+ * Payload of `ar:markerLost`.
+ *
+ * @typedef {Object} MarkerLostPayload
+ * @property {number} markerId - Marker ID within its family
+ * @property {MarkerType} type - Marker family
+ * @property {number} timestamp - `Date.now()` when the event was emitted
+ */
+
+/**
+ * Payload of `ar:workerError`.
+ *
+ * @typedef {Object} WorkerErrorPayload
+ * @property {string} message - What went wrong in the detection worker
+ */

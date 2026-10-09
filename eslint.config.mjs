@@ -5,8 +5,11 @@ import prettier from 'eslint-config-prettier';
 export default [
   {
     ignores: [
-      'examples/vite-artoolkit/vendor/**',
-      'examples/vite-artoolkit/data/**',
+      // Standalone example projects: their install and build output, and
+      // binary assets.
+      'examples/*/node_modules/**',
+      'examples/*/dist/**',
+      'examples/*/public/data/**',
       '**/*.dat',
       '**/*.hiro',
       '**/*.map',
@@ -14,12 +17,15 @@ export default [
       'node_modules/',
       'coverage/',
       'types/',
+      // TypeScript files checked by `npm run test:types` (tsc), which this
+      // JavaScript-only config cannot parse.
+      'tests/typecheck/**',
     ],
   },
   js.configs.recommended,
   prettier,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{js,mjs,cjs,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

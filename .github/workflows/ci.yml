@@ -9,8 +9,13 @@ on:
       - 'examples/**'
       - 'tests/**'
       - 'package.json'
+      - 'package-lock.json'
+      - '.nvmrc'
       - 'vite.config.mjs'
-      - 'vitest.config.js'
+      - 'vitest.config.mjs'
+      - 'tsconfig.json'
+      - 'eslint.config.mjs'
+      - '.prettierrc.json'
       - '.github/workflows/**'
   pull_request:
     branches: ['**'] # run on PRs against any branch
@@ -51,10 +56,35 @@ jobs:
       - name: Build (Vite)
         run: npm run build:vite
 
+      # The public declarations, checked the way a consumer imports them
+      # (package.json "exports", moduleResolution "bundler").
+      - name: Type declarations
+        run: |
+          npm run build:types
+          npm run test:types
+
+      # The example links this repository's dist/ (file:../..), so it builds
+      # after the library. Catches a core change, or a plugin or Vite release,
+      # that breaks a consumer's install or production build.
+      - name: Build vite-artoolkit example
+        run: |
+          npm --prefix examples/vite-artoolkit ci
+          npm --prefix examples/vite-artoolkit run build
+
       - name: Run tests (with coverage)
         run: npm run test:coverage
         env:
           CI: true
+
+      # Reports to Codecov. Needs the CODECOV_TOKEN repository secret; a failed
+      # upload does not fail the build.
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          fail_ci_if_error: false
 
       - name: Upload coverage artifact
         if: always()

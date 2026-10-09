@@ -13,5 +13,12 @@ export default defineConfig({
     threads: {
       singleThread: true,
     },
+    coverage: {
+      // The library only. Without this the report counted package.json and the
+      // example's modules that tests import, and left out files no test loads.
+      include: ['src/**/*.js', 'plugins/**/*.js'],
+      // lcov is what CI uploads to Codecov; html for reading locally.
+      reporter: ['text', 'html', 'lcov'],
+    },
   },
 });

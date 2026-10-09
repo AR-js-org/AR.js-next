@@ -2,12 +2,15 @@
 
 [![npm version](https://badge.fury.io/js/%40ar-js-org%2Far.js-next.svg)](https://badge.fury.io/js/%40ar-js-org%2Far.js-next)
 [![CI](https://github.com/AR-js-org/AR.js-next/actions/workflows/ci.yml/badge.svg)](https://github.com/AR-js-org/AR.js-next/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/AR-js-org/AR.js-next/graph/badge.svg)](https://codecov.io/gh/AR-js-org/AR.js-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub issues](https://img.shields.io/github/issues/AR-js-org/AR.js-next.svg)](https://github.com/AR-js-org/AR.js-next/issues)
 [![GitHub forks](https://img.shields.io/github/forks/AR-js-org/AR.js-next.svg)](https://github.com/AR-js-org/AR.js-next/network/members)
 [![GitHub stars](https://img.shields.io/github/stars/AR-js-org/AR.js-next.svg)](https://github.com/AR-js-org/AR.js-next/stargazers)
 
 A renderer-agnostic AR library built on a modern Entity-Component-System (ECS) architecture with a plugin system.
+
+What changed in each release, including every breaking change, is in [CHANGELOG.md](https://github.com/AR-js-org/AR.js-next/blob/main/CHANGELOG.md).
 
 ## 🚀 Installing
 
@@ -113,10 +116,11 @@ This section clarifies where key behaviors belong.
   - Core provides the event bus; defaultProfilePlugin may seed a fallback projection, but the detection plugin should publish accurate intrinsics when available.
 
 - Marker events
-  - Emitted by detection plugins:
-    - ar:markerFound { markerId: string|number, matrix: Float32Array(16), timestamp?: number }
-    - ar:markerUpdated { markerId: string|number, matrix: Float32Array(16), timestamp?: number }
-    - ar:markerLost { markerId: string|number, timestamp?: number }
+  - Emitted by detection plugins; subscribe through the `EVENTS` constants rather than string literals. Payload types are the `MarkerEventPayload`, `MarkerLostPayload` and `WorkerErrorPayload` typedefs.
+    - `EVENTS.MARKER_FOUND` (`ar:markerFound`) and `EVENTS.MARKER_UPDATED` (`ar:markerUpdated`): `{ markerId: number, type: 'pattern' | 'barcode', matrix: Float32Array(16), confidence: number, vertex?: number[][], dir?: number, timestamp: number }`
+    - `EVENTS.MARKER_LOST` (`ar:markerLost`): `{ markerId: number, type: 'pattern' | 'barcode', timestamp: number }`
+    - `EVENTS.WORKER_READY` (`ar:workerReady`): `{}`; `EVENTS.WORKER_ERROR` (`ar:workerError`): `{ message: string }`
+  - A marker's identity is `type:markerId`: pattern and barcode IDs both start at 0. `vertex` holds the detected square's corners in the pixel coordinates of the submitted frame.
 
 - Example UI toggles (e.g., show/hide video, axis helpers)
   - Responsibility: examples (recommended)
@@ -203,25 +207,28 @@ You do not need to commit `dist/`; it is recreated for each build or publish cyc
 
 ## 🏃 Running Examples
 
-You can use Vite (recommended) during development.
-
-Vite:
+Run the examples with the Vite dev server:
 
 ```bash
 npm install
 npm run dev:vite
-npm run build:vite
-npm run serve:vite
 ```
+
+It opens `http://localhost:5173/examples/index.html`.
 
 - Examples index: examples/index.html
 - Minimal ECS example: examples/minimal/index.html
+- Image source example: examples/basic-ecs/image-example.html
+
+The examples import the built library from `dist/`, which `npm install` builds. After changing
+`src/`, run `npm run build` and reload. There is no `vite preview` step: the build is a library,
+so its output holds no pages to serve.
 
 If the camera doesn’t start, click to allow autoplay. On Safari, prefer HTTPS in dev.
 
 ## 🤝 Contributing
 
-We welcome all contributions! Before you begin, please review our **[CONTRIBUTING.md](https://github.com/AR-js-org/AR.js-core/blob/main/CONTRIBUTING.md)** for guidelines and our **[CODE_OF_CONDUCT.md](https://github.com/AR-js-org/AR.js-core/blob/main/CODE_OF_CONDUCT.md)**. A great way to get started is by exploring open issues and pull requests.
+We welcome all contributions! Before you begin, please review our **[CONTRIBUTING.md](https://github.com/AR-js-org/AR.js-next/blob/main/CONTRIBUTING.md)** for guidelines and our **[CODE_OF_CONDUCT.md](https://github.com/AR-js-org/AR.js-next/blob/main/CODE_OF_CONDUCT.md)**. A great way to get started is by exploring open issues and pull requests.
 
 ## ❓ Troubleshooting (Common)
 
