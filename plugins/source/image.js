@@ -91,8 +91,10 @@ export const imagePlugin = {
           resolve();
         };
 
-        imageElement.onerror = (error) => {
-          reject(new Error(`Failed to load image: ${error.message || 'Unknown error'}`));
+        // onerror receives a plain Event: no message, and no reason (404, CORS,
+        // decode) is exposed to script. The URL is what identifies the failure.
+        imageElement.onerror = () => {
+          reject(new Error(`Failed to load image: ${config.sourceUrl}`));
         };
       });
 

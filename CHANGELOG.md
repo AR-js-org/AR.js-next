@@ -34,6 +34,9 @@ Planned as 0.2.1. No breaking changes.
   (`markerId`, `type`, `matrix`, `confidence`, `vertex`, `dir`, `timestamp`) (#21).
 - `FramePumpSystem` no longer emits a frame after `stop()`: a frame whose `ImageBitmap` was
   still being created when the pump stopped is dropped and its bitmap closed (#24).
+- `imagePlugin` and `videoPlugin` load errors name the URL that failed, instead of always
+  reading `Failed to load image: Unknown error`. The video error also gives the browser's
+  `MediaError` message when there is one (#34).
 
 ### Development
 
