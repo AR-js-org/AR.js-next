@@ -46,6 +46,8 @@ Planned as 0.2.1. No breaking changes.
   (#26).
 - vite 8 (Rolldown) and vitest 5. The published files export the same names, and the
   declarations are unchanged (#29).
+- TypeScript 6 builds the declarations. They are unchanged, except that `Engine.VERSION` and
+  `Engine.REVISION` are typed `string` instead of `any` (#31).
 
 ## [0.2.0] - 2026-01-09
 
