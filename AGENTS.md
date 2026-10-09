@@ -35,7 +35,7 @@ npm run format-check  # prettier --check .   (hyphen, not colon)
 npm run lint          # eslint (flat config in eslint.config.mjs)
 ```
 
-Node is pinned in `.nvmrc` (v22.21.1). CI (`.github/workflows/ci.yml`) runs
+Node is pinned in `.nvmrc` (v24.21.0). CI (`.github/workflows/ci.yml`) runs
 `npm ci`, `format-check`, `lint`, `build:vite` and `test:coverage` on every
 push and PR; keep all of them green.
 

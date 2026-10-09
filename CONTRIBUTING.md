@@ -43,7 +43,7 @@ Scan through our [existing issues](https://github.com/AR-js-org/AR.js-next/issue
 - GitHub Codespaces:
   - [Fork, edit, and preview](https://docs.github.com/en/free-pro-team@latest/github/developing-online-with-codespaces/creating-a-codespace) using [GitHub Codespaces](https://github.com/features/codespaces) without having to install and run the project locally.
 
-3. Install or update to **Node.js v22**. Use nvm if possible and check our `.nvmrc` file.
+3. Install or update to **Node.js v24**. Use nvm if possible and check our `.nvmrc` file.
 
 4. Create a working branch from the dev branch and start with your changes!
 
