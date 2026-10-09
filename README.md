@@ -2,6 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/%40ar-js-org%2Far.js-next.svg)](https://badge.fury.io/js/%40ar-js-org%2Far.js-next)
 [![CI](https://github.com/AR-js-org/AR.js-next/actions/workflows/ci.yml/badge.svg)](https://github.com/AR-js-org/AR.js-next/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/AR-js-org/AR.js-next/graph/badge.svg)](https://codecov.io/gh/AR-js-org/AR.js-next)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub issues](https://img.shields.io/github/issues/AR-js-org/AR.js-next.svg)](https://github.com/AR-js-org/AR.js-next/issues)
 [![GitHub forks](https://img.shields.io/github/forks/AR-js-org/AR.js-next.svg)](https://github.com/AR-js-org/AR.js-next/network/members)
