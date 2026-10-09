@@ -8,7 +8,9 @@ API; every breaking change is marked **Breaking** and says what consumers must c
 
 ## [Unreleased]
 
-Planned as 0.2.1. No breaking changes.
+## [0.2.1] - 2026-10-09
+
+No breaking changes.
 
 ### Added
 
@@ -37,6 +39,8 @@ Planned as 0.2.1. No breaking changes.
 - `imagePlugin` and `videoPlugin` load errors name the URL that failed, instead of always
   reading `Failed to load image: Unknown error`. The video error also gives the browser's
   `MediaError` message when there is one (#34).
+- The package's `repository`, `homepage` and `bugs` links point at AR.js-next. `repository`
+  still named the old AR.js-core repository, so npm linked there (#36).
 
 ### Development
 
@@ -68,5 +72,6 @@ First release as `@ar-js-org/ar.js-next`.
 - **Breaking:** the legacy `Source`/`Profile`/`Session` API. Build on the ECS `Engine` and
   plugins instead.
 
-[Unreleased]: https://github.com/AR-js-org/AR.js-next/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/AR-js-org/AR.js-next/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/AR-js-org/AR.js-next/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/AR-js-org/AR.js-next/releases/tag/v0.2.0
