@@ -1,6 +1,6 @@
 {
   "name": "@ar-js-org/ar.js-next",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "core library of AR.js",
   "main": "dist/arjs-core.js",
   "module": "dist/arjs-core.mjs",
@@ -32,7 +32,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/AR-js-org/AR.js-core.git"
+    "url": "git+https://github.com/AR-js-org/AR.js-next.git"
   },
   "keywords": [
     "AR.js",
@@ -70,5 +70,9 @@
     "types",
     "README.md",
     "LICENSE"
-  ]
+  ],
+  "homepage": "https://github.com/AR-js-org/AR.js-next#readme",
+  "bugs": {
+    "url": "https://github.com/AR-js-org/AR.js-next/issues"
+  }
 }

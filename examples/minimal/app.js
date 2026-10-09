@@ -129,6 +129,6 @@ function updateStatus(state, text) {
 btnStop.disabled = true;
 updateStatus('loading', 'Ready to start');
 
-console.log('AR.js Core initialized with ECS architecture');
+console.log('AR.js-next initialized with ECS architecture');
 console.log('Registered plugins:', engine.pluginManager.getRegisteredPlugins());
 console.log('Device profile:', profile);
