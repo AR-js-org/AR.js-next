@@ -13,6 +13,6 @@
     "@ar-js-org/artoolkit5-wasm": "^0.4.1"
   },
   "devDependencies": {
-    "vite": "^7.3.0"
+    "vite": "^8.3.4"
   }
 }

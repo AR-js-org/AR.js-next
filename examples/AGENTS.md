@@ -22,7 +22,7 @@ Vite projects with their own `package.json`:
     "@ar-js-org/arjs-plugin-artoolkit": "^0.3.0",
     "@ar-js-org/artoolkit5-wasm": "^0.4.1"
   },
-  "devDependencies": { "vite": "^7.3.0" }
+  "devDependencies": { "vite": "^8.3.4" }
 }
 ```
 
