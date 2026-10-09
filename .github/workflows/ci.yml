@@ -9,8 +9,13 @@ on:
       - 'examples/**'
       - 'tests/**'
       - 'package.json'
+      - 'package-lock.json'
+      - '.nvmrc'
       - 'vite.config.mjs'
-      - 'vitest.config.js'
+      - 'vitest.config.mjs'
+      - 'tsconfig.json'
+      - 'eslint.config.mjs'
+      - '.prettierrc.json'
       - '.github/workflows/**'
   pull_request:
     branches: ['**'] # run on PRs against any branch

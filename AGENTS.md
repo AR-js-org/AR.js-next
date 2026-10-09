@@ -117,8 +117,6 @@ Core code must stay DOM-free so it runs under node. Browser-only code
   the build outputs `dist/arjs-core.*`.
 - `docs/ECS_ARCHITECTURE.md` and `docs/IMPLEMENTATION_SUMMARY.md` still
   describe the legacy classes removed in #11.
-- `ci.yml`'s path filter lists `vitest.config.js`; the file is
-  `vitest.config.mjs`.
 
 ## Commits
 
