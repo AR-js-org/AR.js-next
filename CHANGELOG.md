@@ -41,6 +41,9 @@ No breaking changes.
   `MediaError` message when there is one (#34).
 - The package's `repository`, `homepage` and `bugs` links point at AR.js-next. `repository`
   still named the old AR.js-core repository, so npm linked there (#36).
+- The README's links to the changelog and the contribution guides work from the npm page and
+  an installed package, and no longer point at AR.js-core; the examples are titled AR.js-next
+  (#36).
 
 ### Development
 
