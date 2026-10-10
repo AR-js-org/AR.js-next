@@ -132,6 +132,24 @@ the section; see `MAINTAINERS.md`.
 ## Git
 
 - Branch flow: feature branch → `dev` → `main`, through pull requests. Never
-  commit directly to `main`; the `.claude` hook refuses it.
+  commit directly to `main`; the `arjs` plugin's guard refuses `git commit`
+  and pushes to `main` (see "Claude Code setup" below).
+- The `arjs` plugin's formatter runs the repository's prettier and eslint
+  `--fix` on every file an agent edits.
 - Never pass `--author` or `-c user.name=…` to `git commit`.
 - Releases follow `MAINTAINERS.md`.
+
+### Claude Code setup
+
+The guard and the formatter come from the `arjs` plugin in
+[arjs-dev-tools](https://github.com/AR-js-org/arjs-dev-tools), enabled in
+`.claude/settings.json`. Once per clone, after trusting the folder in Claude
+Code, install it for the project:
+
+```bash
+claude plugin install arjs@arjs-dev-tools --scope project
+```
+
+A new session's `/hooks` then lists both as `arjs@arjs-dev-tools`. Without
+the install neither runs: `enabledPlugins` alone registers the marketplace
+but does not load the plugin.
